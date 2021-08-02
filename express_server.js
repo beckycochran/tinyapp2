@@ -14,3 +14,10 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+app.get("/urls.json", (req, res) => {
+  res.json(urlDatabase);
+});
+
+// returns {"b2xVn2":"http://www.lighthouselabs.ca","9sm5xK":"http://www.google.com"}
+// JSON string representing entire urlDatabase object
