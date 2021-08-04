@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
+const { reset } = require("nodemon");
 app.use(bodyParser.urlencoded({extended: true}));
 
 
@@ -33,6 +34,10 @@ app.get("/urls.json", (req, res) => {
 // JSON string representing entire urlDatabase object
 
 
+
+
+////////////////////////////////////// URLS
+
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
@@ -48,9 +53,12 @@ app.post("/urls", (req, res) => {
 
   res.render("urls_index", templateVars);
   
-  res.redirect(`/urls/:${shortURL}`);
+  res.redirect(`/urls`);
 
 });
+
+
+///////////////////////////////// URLS/NEW
 
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
@@ -63,7 +71,20 @@ app.get("/urls/:shortURL", (req, res) => {
   const templateVars = { shortURL, longURL };
   
   res.render("urls_show", templateVars);
+  res.redirect('/urls/:shortURL');
 });
+
+app.post("/urls/:shortURL/edit", (req, res) => {
+  const shortURL = req.params.shortURL;
+  const longURL = urlDatabase[shortURL];
+
+  const templateVars = { shortURL, longURL };
+
+  res.render('urls_show', templateVars);
+})
+
+
+// POST /urls/:id
 
 
 app.get("/u/:shortURL", (req, res) => {
@@ -82,7 +103,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   console.log(urlDatabase, 'urlDatabase');
   console.log(shortURL, 'shortURL');
 
-
   res.redirect(`/urls`);
 
 });
+
