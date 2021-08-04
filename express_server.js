@@ -3,6 +3,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const { reset } = require("nodemon");
+const cookieParser = require('cookie-parser')
 app.use(bodyParser.urlencoded({extended: true}));
 
 
@@ -64,14 +65,14 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
-app.get("/urls/:shortURL", (req, res) => {
+app.post("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
-  const longURL = urlDatabase[shortURL];
+  const longURL = req.body.longURL;
 
+  urlDatabase[shortURL] = longURL;
   const templateVars = { shortURL, longURL };
   
-  res.render("urls_show", templateVars);
-  res.redirect('/urls/:shortURL');
+  res.redirect('/urls');
 });
 
 app.post("/urls/:shortURL/edit", (req, res) => {
@@ -82,9 +83,6 @@ app.post("/urls/:shortURL/edit", (req, res) => {
 
   res.render('urls_show', templateVars);
 })
-
-
-// POST /urls/:id
 
 
 app.get("/u/:shortURL", (req, res) => {
@@ -107,3 +105,12 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 });
 
+
+app.post("/login", (req, res) => {
+  const shortURL = req.params.shortURL;
+  const longURL = urlDatabase[shortURL];
+
+  const templateVars = { shortURL, longURL };
+
+  res.render('urls_show', templateVars);
+})
