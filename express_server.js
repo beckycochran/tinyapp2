@@ -54,15 +54,10 @@ app.get("/urls", (req, res) => {
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   const longURL = req.body.longURL;
-  const username = req.cookies('username');
   
-  console.log(req.body.longURL);
   urlDatabase[shortURL] = longURL;
 
-  const templateVars = { urls: urlDatabase, username };
-
-  res.render("urls_index", templateVars);
-  
+  res.redirect('/urls');  
 
 });
 
@@ -70,16 +65,20 @@ app.post("/urls", (req, res) => {
 ///////////////////////////////// URLS/NEW
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const shortURL = req.params.shortURL;
+  const longURL = req.body.longURL;
+  const username = req.cookies['username'];
+
+  const templateVars = { shortURL, longURL, username };
+
+  res.render("urls_new", templateVars);
 });
 
 app.post("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = req.body.longURL;
-  const username = req.cookies('username');
 
   urlDatabase[shortURL] = longURL;
-  const templateVars = { shortURL, longURL, username };
   
   res.redirect('/urls');
 });
@@ -87,12 +86,14 @@ app.post("/urls/:shortURL", (req, res) => {
 app.post("/urls/:shortURL/edit", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL];
-  const username = req.cookies('username');
+  const username = req.cookies['username'];
 
   const templateVars = { shortURL, longURL, username };
 
-  res.render('urls_show', templateVars);
+  res.render("urls_show", templateVars);
 })
+
+
 
 
 app.get("/u/:shortURL", (req, res) => {
@@ -106,11 +107,8 @@ app.get("/u/:shortURL", (req, res) => {
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL];
-
   delete urlDatabase[shortURL];
-  console.log(urlDatabase, 'urlDatabase');
-  console.log(shortURL, 'shortURL');
-
+  
   res.redirect(`/urls`);
 
 });
@@ -122,8 +120,4 @@ app.post("/login", (req, res) => {
 
 
   res.redirect(`/urls`);
-
-  // const templateVars = { username };
-  // res.render("urls_index", templateVars);
-  
 });
