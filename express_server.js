@@ -4,6 +4,8 @@ const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const { reset } = require("nodemon");
 const cookieParser = require('cookie-parser')
+app.use(cookieParser());
+
 app.use(bodyParser.urlencoded({extended: true}));
 
 
@@ -36,25 +38,31 @@ app.get("/urls.json", (req, res) => {
 
 
 
+/////// ALL GET REQUESTS SHOULD RENDER TEMPLATE VARS
+/////////// ALL POST REQUESTS SHOULD REDIRECT
+//////////// req.cookies is an OBJECT
+
 
 ////////////////////////////////////// URLS
 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const username = req.cookies['username'];
+  const templateVars = { urls: urlDatabase, username };
   res.render("urls_index", templateVars);
 });
 
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   const longURL = req.body.longURL;
+  const username = req.cookies('username');
+  
   console.log(req.body.longURL);
   urlDatabase[shortURL] = longURL;
 
-  const templateVars = { urls: urlDatabase };
+  const templateVars = { urls: urlDatabase, username };
 
   res.render("urls_index", templateVars);
   
-  res.redirect(`/urls`);
 
 });
 
@@ -68,9 +76,10 @@ app.get("/urls/new", (req, res) => {
 app.post("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = req.body.longURL;
+  const username = req.cookies('username');
 
   urlDatabase[shortURL] = longURL;
-  const templateVars = { shortURL, longURL };
+  const templateVars = { shortURL, longURL, username };
   
   res.redirect('/urls');
 });
@@ -78,8 +87,9 @@ app.post("/urls/:shortURL", (req, res) => {
 app.post("/urls/:shortURL/edit", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL];
+  const username = req.cookies('username');
 
-  const templateVars = { shortURL, longURL };
+  const templateVars = { shortURL, longURL, username };
 
   res.render('urls_show', templateVars);
 })
@@ -107,10 +117,13 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 
 app.post("/login", (req, res) => {
-  const shortURL = req.params.shortURL;
-  const longURL = urlDatabase[shortURL];
+  const username = req.body.username;
+  res.cookie('username', username);
 
-  const templateVars = { shortURL, longURL };
 
-  res.render('urls_show', templateVars);
-})
+  res.redirect(`/urls`);
+
+  // const templateVars = { username };
+  // res.render("urls_index", templateVars);
+  
+});
