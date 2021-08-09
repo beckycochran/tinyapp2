@@ -1,4 +1,5 @@
 const { assert } = require('chai');
+const expect = chai.expect;
 
 const { getUserByEmail } = require('../helpers.js');
 
@@ -19,6 +20,12 @@ describe('getUserByEmail', function() {
   it('should return a user with valid email', function() {
     const user = getUserByEmail("user@example.com", users)
     const expectedOutput = "userRandomID";
-    assert.equal(user, expectedOutput, 'assertion if user has valid email');
+    assert.equal(user, expectedOutput, 'indexing email returns expected');
+  });
+
+  it('should return a user with valid email', function() {
+    const user = 'non-existent email';
+    const expectedOutput = undefined;
+    assert.equal(user, expectedOutput, 'non-existent email must return undefined');
   });
 });
