@@ -1,12 +1,10 @@
-////////////// DECLARATIONS/INITIALIZATIONS ////////////////////////
-
 const express = require("express");
 const bcrypt = require('bcrypt');
 const { getUserByEmail, generateRandomString, urlsForUser } = require("./helpers");
 
 const cookieSession = require('cookie-session');
 const app = express();
-const PORT = 8080; // default port 8080
+const PORT = 8080; 
 
 app.set("view engine", "ejs");
 const bodyParser = require("body-parser");
@@ -15,12 +13,10 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: 'session',
   keys: [generateRandomString(6)],
-  // Cookie Options
-  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  maxAge: 24 * 60 * 60 * 1000
 }))
 
 const urlDatabase = {
-  //shortURL as the object name
   b6UTxQ: {
       longURL: "https://www.tsn.ca",
       userID: "aJ48lW"
@@ -31,7 +27,6 @@ const urlDatabase = {
   }
 };
 
-/////////// NEW COMMENT 
 const users = { 
   "userRandomID": {
     id: "userRandomID", 
@@ -57,22 +52,21 @@ app.get("/urls.json", (req, res) => {
 });
 
 
-////////////////////////////////////// URLS
-
 app.get("/urls", (req, res) => {
-  const username = req.cookies['username'];
-  const templateVars = { urls: urlDatabase, username };
-  res.render("urls_index", templateVars);
-});
+  const id = req.session.userID;
+  const user = users[id];
+  const shortURLS = urlDatabase;
 
-app.post("/urls", (req, res) => {
-  const shortURL = generateRandomString();
-  const longURL = req.body.longURL;
-  
-  urlDatabase[shortURL] = longURL;
+  console.log(id, "user id");
+  console.log(user, "user");
+  console.log(shortURLS, "shortURLS");
 
-  res.redirect('/urls');  
 
+   const templateVars = { 
+     shortURLS,
+     user,
+    };
+   res.render("urls_index", templateVars);
 });
 
 
