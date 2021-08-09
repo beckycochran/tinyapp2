@@ -4,9 +4,9 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-!["backend code for /urls"](https://raw.githubusercontent.com/beckyparkes/tinyapp/main/docs/urls-code-express.png)
+!["screenshot of header partial"](https://raw.githubusercontent.com/beckyparkes/tinyapp2/main/docs/header-partial.png)
 
-!["code shortUrls-routes and code for index page"](https://raw.githubusercontent.com/beckyparkes/tinyapp/main/docs/urls-routes-express_index-page.png)
+!["screenshot of urls-index page"](https://raw.githubusercontent.com/beckyparkes/tinyapp2/main/docs/urls-page.png)
 
 ## Dependencies
 
