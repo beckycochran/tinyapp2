@@ -1,5 +1,3 @@
-<!-- Page to show the urls  -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,21 +17,38 @@
         <tr>
           <th scope="col">Short URL</th>
           <th scope="col">Long URL</th>
+          <th scope="col">Owner ID</th>
           <th scope="col">Edit</th>
           <th scope="col">Delete</th>
         </tr>
       </thead>
       <tbody>
-        <% for(let url in urls) { %>
+        <% for(let shortURL in shortURLS) { %>
+
           <tr>
-            <td><%= url %></td>
-            <td><%= urls[url] %></td>
-            <td><form method="POST" action="/urls/<%= url %>/edit"><button type="submit">Edit</button></form></td>
-            <td><form method="POST" action="/urls/<%= url %>/delete"><button type="submit">Delete</button></form></td>
+          <% if(!user) {%>
+            <td>Urls cannot be shown unless you are logged in</td>
+          <% } else { %>
+
+            <td><%= shortURL %></td>
+            <td><%= shortURLS[shortURL].longURL %></td>
+            <td><%= shortURLS[shortURL].userID %></tdet values in cookies is different.
+
+              To set the user_id key on a session, write:
+              
+              req.session.user_id = "some value";
+              >
+
+            <td><button type='submit'><a href="/urls/<%= shortURL %>">Edit</a></button></td>
+            
+            <td><form method="POST" action="/urls/<%= shortURL %>/delete">
+              <button type="submit">Delete</button></td>
+              </form>
           </tr>
+          <% } %>
         <% } %>
       </tbody>
-    </table>
+    </table>  
   </main>
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
