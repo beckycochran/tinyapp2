@@ -12,8 +12,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(cookieSession({
   name: 'session',
-  keys: [generateRandomString(6)],
-  maxAge: 24 * 60 * 60 * 1000
+  keys: ['key1', 'key2']
 }))
 
 const urlDatabase = {
@@ -153,7 +152,7 @@ app.post("/login", (req, res) => {
 app.post("/logout", (req, res) => {
   console.log(req.session.userID);
   req.session = null;
-  
+
   res.redirect("/urls");
 })
 
@@ -168,18 +167,21 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
 
+ 
   const email = req.body.email;
-
   const password = req.body.password;
-  const hashedPassword = bcrypt.hashSync(password, 10);
 
   if (!email || !password) {
     return res.status(400).send("Missing email or password. Please <a href= '/register'>try again</a>");
   }
 
+  const hashedPassword = bcrypt.hashSync(password, 10);
   const id = generateRandomString();
-  const user = { id, email, password };
+  const user = { id, email, password: hashedPassword };
   users[id] = user;
+
+  req.session.userID = id;
+
 
   res.redirect("/urls");
 
