@@ -56,11 +56,6 @@ app.get("/urls", (req, res) => {
   const user = users[id];
   const shortURLS = urlDatabase;
 
-  console.log(id, "user id");
-  console.log(user, "user");
-  console.log(shortURLS, "shortURLS");
-
-
    const templateVars = { 
      shortURLS,
      user,
@@ -87,7 +82,6 @@ app.post("/urls/:shortURL", (req, res) => {
 
   const shortURL = req.params.shortURL;
   const longURL = req.body.longURL;
-  console.log("the longURL", longURL);
 
   if (urlDatabase[shortURL].userID === user.id) {
     
@@ -174,6 +168,9 @@ app.post("/register", (req, res) => {
   if (!email || !password) {
     return res.status(400).send("Missing email or password. Please <a href= '/register'>try again</a>");
   }
+  if (getUserByEmail(email, users)) {
+    return res.status(400).send("Email already exists. Please <a href= '/login'>login</a> or <a href= '/register'>register with a new email.</a>");
+  }
 
   const hashedPassword = bcrypt.hashSync(password, 10);
   const id = generateRandomString();
@@ -181,8 +178,6 @@ app.post("/register", (req, res) => {
   users[id] = user;
 
   req.session.userID = id;
-
-
   res.redirect("/urls");
 
 })
