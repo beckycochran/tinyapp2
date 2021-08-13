@@ -40,7 +40,7 @@ const users = {
   }
 }
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.render("user-login");
 });
 
 app.listen(PORT, () => {
@@ -130,29 +130,16 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect("/urls");
 });
 
-
-app.post("/urls/:shortURL/delete", (req, res) => {
-  const shortURL = req.params.shortURL;
-  const longURL = urlDatabase[shortURL];
-  delete urlDatabase[shortURL];
-  
-  res.redirect(`/urls`);
-
-});
-
 app.get("/login", (req, res) => {
   const id = req.session.userID;
   const user = users[id];
   res.render("user-login", { user });
 })
 
-
 app.post("/login", (req, res) => {
   const email = req.body.email;
-
   const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
-
 
   if (bcrypt.compareSync(password, hashedPassword)) {
     const user = getUserByEmail(email, users);
@@ -162,8 +149,11 @@ app.post("/login", (req, res) => {
   return res.status(403).send("Invalid Credentials. Please <a href= '/login'>try again</a>"); 
 });
 
+
 app.post("/logout", (req, res) => {
-  res.clearCookie('userID');
+  console.log(req.session.userID);
+  req.session = null;
+  
   res.redirect("/urls");
 })
 
