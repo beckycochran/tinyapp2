@@ -134,18 +134,21 @@ app.post("/login", (req, res) => {
   const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
 
-  if (bcrypt.compareSync(password, hashedPassword)) {
-    const user = getUserByEmail(email, users);
+  const user = getUserByEmail(email, users);
+  if (!user) {
+    return res.status(403).send("User does not exist. Please <a href= '/login'>try again</a>"); 
+  }
+  console.log(user.password, "user.password");
+  if (bcrypt.compareSync(password, user.password)) {
     req.session.userID = user.id;
     return res.redirect(`/urls`);
-  }
+  } 
   return res.status(403).send("Invalid Credentials. Please <a href= '/login'>try again</a>"); 
 });
 
 
 app.post("/logout", (req, res) => {
   req.session = null;
-
   res.redirect("/urls");
 })
 
