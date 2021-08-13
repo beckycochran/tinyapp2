@@ -144,7 +144,6 @@ app.post("/login", (req, res) => {
 
 
 app.post("/logout", (req, res) => {
-  console.log(req.session.userID);
   req.session = null;
 
   res.redirect("/urls");
