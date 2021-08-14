@@ -31,8 +31,8 @@
           <% } else { %>
 
             <td><%= shortURL %></td>
-            <td><%= shortURLS.shortURL.longURL %></td>
-            <td><%= shortURLS.shortURL.userID %>
+            <td><%= shortURLS[shortURL].longURL %></td>
+            <td><%= shortURLS[shortURL].userID %>
 
             <td><button type='submit'><a href="/urls/<%= shortURL %>">Edit</a></button></td>
             

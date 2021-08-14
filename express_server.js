@@ -76,12 +76,12 @@ app.post("/urls", (req, res) => {
   const longURL = req.body.longURL;
   console.log(req.body.longURL);
 
-  const id = req.session.userID;
-  const user = users[id];
+  const userID = req.session.userID;
+  const user = users[userID];
 
-  urlDatabase[shortURL] = longURL;
+  urlDatabase[shortURL] = {longURL, userID};
 
-  const templateVars = { shortURLS: urlDatabase, user, id };
+  const templateVars = { shortURLS: urlDatabase, user };
   res.render("urls_index", templateVars);
 });
 
