@@ -13,8 +13,6 @@ const urlsForUser = function(id, urlDatabase) {
   } return userUrls;
 }
 
-
-
 const getUserByEmail = function(email, users) {
   const values = Object.values(users);
   for (const user of values) {
@@ -23,7 +21,6 @@ const getUserByEmail = function(email, users) {
     }
   } return null;
 }
-
 
 
 

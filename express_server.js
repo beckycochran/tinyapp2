@@ -68,9 +68,10 @@ app.get("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = req.body.longURL;
-  const username = req.cookies['username'];
+  const id = req.session.userID;
+  const user = users[id];
 
-  const templateVars = { shortURL, longURL, username };
+  const templateVars = { shortURL, longURL, user};
 
   res.render("urls_new", templateVars);
 });
@@ -96,7 +97,6 @@ app.post("/urls/:shortURL", (req, res) => {
 app.post("/urls/:shortURL/edit", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL];
-  const username = req.cookies['username'];
 
   const templateVars = { shortURL, longURL, username };
 
@@ -123,53 +123,28 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect("/urls");
 });
 
-app.get("/login", (req, res) => {
-  const id = req.session.userID;
-  const user = users[id];
-  res.render("user-login", { user });
-})
-
-app.post("/login", (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  const hashedPassword = bcrypt.hashSync(password, 10);
-
-  const user = getUserByEmail(email, users);
-  if (!user) {
-    return res.status(403).send("User does not exist. Please <a href= '/login'>try again</a>"); 
-  }
-  console.log(user.password, "user.password");
-  if (bcrypt.compareSync(password, user.password)) {
-    req.session.userID = user.id;
-    return res.redirect(`/urls`);
-  } 
-  return res.status(403).send("Invalid Credentials. Please <a href= '/login'>try again</a>"); 
-});
 
 
-app.post("/logout", (req, res) => {
-  req.session = null;
-  res.redirect("/urls");
-})
+/// ------------------  REGISTER  ------------------  ///
 
 app.get("/register", (req, res) => {
 
   const id = req.session.userID;
   const user = users[id];
-  
   res.render("user-reg", { user });
   
 })
 
 app.post("/register", (req, res) => {
-
- 
   const email = req.body.email;
   const password = req.body.password;
 
+
+  // ---------- ERROR! Either form is empty. -------------//
   if (!email || !password) {
     return res.status(400).send("Missing email or password. Please <a href= '/register'>try again</a>");
   }
+  // ---------- ERROR! User already exists. -------------//
   if (getUserByEmail(email, users)) {
     return res.status(400).send("Email already exists. Please <a href= '/login'>login</a> or <a href= '/register'>register with a new email.</a>");
   }
@@ -183,3 +158,40 @@ app.post("/register", (req, res) => {
   res.redirect("/urls");
 
 })
+
+
+/// ------------------  LOGIN   ------------------  ///
+app.get("/login", (req, res) => {
+  const id = req.session.userID;
+  const user = users[id];
+  res.render("user-login", { user });
+})
+
+
+
+app.post("/login", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, 10);
+
+
+  const user = getUserByEmail(email, users);
+  // ---------- ERROR! User does not exist. -------------//
+  if (!user) {
+    return res.status(403).send("User does not exist, or credentials are invalid. Please <a href= '/login'>try again</a>"); 
+  }
+  // ---------- The password corresponds to the stored hashed password -------------//
+  if (bcrypt.compareSync(password, user.password)) {
+    req.session.userID = user.id;
+    return res.redirect(`/urls`);
+  } 
+});
+
+/// ------------------  LOGOUT  ------------------  ///
+
+app.post("/logout", (req, res) => {
+  req.session = null;
+  res.redirect("/urls");
+})
+
+
