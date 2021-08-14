@@ -17,6 +17,8 @@
         
         <% if(!user) {%>
         <a class="nav-item nav-link" href="/register">Register</a>
+        <a class="nav-item nav-link" href="/login">Login</a>
+
         <%}%>
       
       <ul class= "nav justify-content end">  
@@ -33,12 +35,6 @@
           </div>
         </li>
         <%}%>
-
-      <% if(!user) {%>
-        <li>
-          <a class="nav-item nav-link" href="/login">Login</a>
-        </li>
-      <%}%>
       </ul>
   </nav>
 </header>

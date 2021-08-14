@@ -1,6 +1,6 @@
 const express = require("express");
 const bcrypt = require('bcrypt');
-const { getUserByEmail, generateRandomString, urlsForUser } = require("./helpers");
+const { getUserByEmail, generateRandomString } = require("./helpers");
 
 const cookieSession = require('cookie-session');
 const app = express();
@@ -55,7 +55,9 @@ app.get("/", (req, res) => {
   res.redirect('/login');
 });
 
+/// ----------------------------------------------  ///
 
+/// ------------------  /urls ------------------  ///
 
 app.get("/urls", (req, res) => {
   const id = req.session.userID;
@@ -69,7 +71,23 @@ app.get("/urls", (req, res) => {
    res.render("urls_index", templateVars);
 });
 
+app.post("/urls", (req, res) => {
+  const shortURL = generateRandomString(8);
+  const longURL = req.body.longURL;
+  console.log(req.body.longURL);
 
+  const id = req.session.userID;
+  const user = users[id];
+
+  urlDatabase[shortURL] = longURL;
+
+  const templateVars = { shortURLS: urlDatabase, user, id };
+  res.render("urls_index", templateVars);
+});
+
+
+
+/// ------------------  /urls/new ------------------  ///
 
 app.get("/urls/new", (req, res) => {
   const shortURL = req.params.shortURL;
@@ -90,9 +108,9 @@ app.post("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = req.body.longURL;
 
-  if (urlDatabase[shortURL].userID === user.id) {
-    
+  if (urlDatabase[shortURL].userID === user.id) {  
     urlDatabase[shortURL].longURL = longURL;
+
     res.redirect("/urls");
   } else {
     res.status(403).send("Not yours. Please <a href= '/login'>try again</a>");
