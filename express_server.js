@@ -38,9 +38,6 @@ const users = {
     password: "dishwasher-funk"
   }
 }
-app.get("/", (req, res) => {
-  res.render("user-login");
-});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
@@ -50,6 +47,15 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+app.get("/", (req, res) => {
+  const id = req.session.userID;  
+  if (id) {
+    res.redirect('/urls');
+  }
+  res.redirect('/login');
+});
+
+
 
 app.get("/urls", (req, res) => {
   const id = req.session.userID;
@@ -58,7 +64,7 @@ app.get("/urls", (req, res) => {
 
    const templateVars = { 
      shortURLS,
-     user,
+     user
     };
    res.render("urls_index", templateVars);
 });
@@ -124,6 +130,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 
+/// ----------------------------------------------  ///
 
 /// ------------------  REGISTER  ------------------  ///
 
@@ -159,11 +166,14 @@ app.post("/register", (req, res) => {
 
 })
 
+/// ----------------------------------------------  ///
 
 /// ------------------  LOGIN   ------------------  ///
+
 app.get("/login", (req, res) => {
   const id = req.session.userID;
-  const user = users[id];
+  const user = users.id;
+
   res.render("user-login", { user });
 })
 
@@ -173,7 +183,6 @@ app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
-
 
   const user = getUserByEmail(email, users);
   // ---------- ERROR! User does not exist. -------------//
@@ -187,6 +196,7 @@ app.post("/login", (req, res) => {
   } 
 });
 
+/// ----------------------------------------------  ///
 /// ------------------  LOGOUT  ------------------  ///
 
 app.post("/logout", (req, res) => {
